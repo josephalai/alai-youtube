@@ -1,4 +1,4 @@
-package services
+package alaitube
 
 import (
 	"github.com/go-redis/redis"
