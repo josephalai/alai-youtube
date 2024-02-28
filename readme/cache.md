@@ -4,7 +4,7 @@ This guide provides detailed instructions on how to integrate and utilize the ca
 
 ## Documentation Structure
 
-- [Getting Started](../readme.md) - Start here if you're new to the project.
+- [Getting Started](./main.md) - Start here if you're new to the project.
 - [Caching Implementation Guide](./cache.md) - Learn how to enhance performance with our caching interface.
 - [Gin-Gonic Web Server Setup](./gin-gonic.md) - Instructions for setting up the YouTube API wrapper with Gin-Gonic.
 
