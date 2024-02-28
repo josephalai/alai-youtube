@@ -329,7 +329,7 @@ func (yt *YoutubeApi) FindTags(input string, numPages int, optionalParams ...map
 	}
 
 	var videos = make([]string, 0)
-	fSearch := strings.Replace(input, " ", "%20%", -1)
+	fSearch := strings.Replace(input, " ", "%20", -1) // Corrected replacement string
 	nextPage := ""
 	pageVar := "&pageToken=%v"
 
@@ -339,11 +339,15 @@ func (yt *YoutubeApi) FindTags(input string, numPages int, optionalParams ...map
 		Thumbnails   Thumbnails
 	}
 	vidIds := make(map[string]VidSnippetInfo)
+
 	for i := 0; i < numPages; i++ {
 		nextPageStr := ""
-		if i > 0 {
+		if nextPage != "" { // Use nextPage value to continue the loop
 			nextPageStr = fmt.Sprintf(pageVar, nextPage)
+		} else if i > 0 { // Break the loop if nextPage is empty and not on the first iteration
+			break
 		}
+
 		pageUrl := fmt.Sprintf(SearchVideoIds, fSearch, yt.ApiKey(), nextPageStr)
 
 		resp, err := http.Get(pageUrl)
@@ -353,15 +357,11 @@ func (yt *YoutubeApi) FindTags(input string, numPages int, optionalParams ...map
 		}
 		defer resp.Body.Close()
 
-		log.Printf("GET %s status: %s\n", pageUrl, resp.Status)
-
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			log.Printf("Failed reading body, error: %v\n", err)
 			return nil, err
 		}
-
-		// log.Printf("Response body: %s\n", string(body))
 
 		res := TagSearchResults{}
 		err = json.Unmarshal(body, &res)
@@ -372,10 +372,15 @@ func (yt *YoutubeApi) FindTags(input string, numPages int, optionalParams ...map
 
 		for _, vid := range res.Items {
 			videos = append(videos, vid.Id.VideoId)
-			vidIds[vid.Id.VideoId] = VidSnippetInfo{ChannelTitle: vid.Snippet.ChannelTitle, ChannelId: vid.Snippet.ChannelId, Thumbnails: vid.Snippet.Thumbnails}
+			vidIds[vid.Id.VideoId] = VidSnippetInfo{
+				ChannelTitle: vid.Snippet.ChannelTitle,
+				ChannelId:    vid.Snippet.ChannelId,
+				Thumbnails:   vid.Snippet.Thumbnails,
+			}
 		}
+
 		nextPage = res.NextPageToken
-		if nextPage == "" {
+		if nextPage == "" { // Break the loop if there's no nextPageToken
 			break
 		}
 	}
