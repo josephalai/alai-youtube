@@ -47,11 +47,6 @@ func GetInstance(optionalParams ...map[string]interface{}) *YoutubeApi {
 	youTubeServiceInstance.Do(func() {
 		youTubeServiceInstance.Instance = NewYoutubeApi(apiKey, cache)
 	})
-	tags, err := youTubeServiceInstance.Instance.SearchAndRetrieveTags("alai")
-	if err != nil {
-		log.Printf("error: %v\n", err)
-	}
-	log.Printf("tags: %v\n", tags)
 
 	return youTubeServiceInstance.Instance
 }
