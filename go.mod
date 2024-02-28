@@ -1,4 +1,4 @@
-module github.com/josephalai/alai-youtube
+module github.com/josephalai/alaitube
 
 go 1.21.5
 
